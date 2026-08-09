@@ -9,6 +9,7 @@ import ListingDetail from "./features/listings/ListingDetail";
 import EditListing from "./features/listings/EditListing";
 import MyListings from "./features/listings/MyListings";
 import Favourites from "./features/favourites/Favourites";
+import MyInquiries from "./features/inquiries/MyInquiries";
 
 function App() {
   return (
@@ -50,6 +51,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MyListings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-inquiries"
+          element={
+            <ProtectedRoute>
+              <MyInquiries />
             </ProtectedRoute>
           }
         />

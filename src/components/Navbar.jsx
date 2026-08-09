@@ -1,6 +1,6 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../features/auth/authSlice';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 export default function Navbar() {
   const { user, token } = useSelector((state) => state.auth);
@@ -9,14 +9,14 @@ export default function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   const linkClass = ({ isActive }) =>
     `relative pb-1 transition-colors ${
-      isActive ? 'text-brass' : 'hover:text-brass text-stone'
+      isActive ? "text-brass" : "hover:text-brass text-stone"
     } after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-brass after:transition-all after:duration-300 ${
-      isActive ? 'after:w-full' : 'after:w-0'
+      isActive ? "after:w-full" : "after:w-0"
     }`;
 
   return (
@@ -40,6 +40,9 @@ export default function Navbar() {
             </NavLink>
             <NavLink to="/listings/new" className={linkClass}>
               + New Listing
+            </NavLink>
+            <NavLink to="/my-inquiries" className={linkClass}>
+              Inquiries
             </NavLink>
             <span className="text-stone/50">{user?.username}</span>
             <button
