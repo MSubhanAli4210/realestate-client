@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-ink: #1C1B19;
+  --color-stone: #F5F1EA;
+  --color-brass: #B08B57;
+  --color-slate: #6B675F;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-stone);
+}
