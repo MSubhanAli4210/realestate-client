@@ -50,6 +50,15 @@ export default function MyInquiries() {
                 </span>
               </div>
               <p className="text-slate text-sm">{inquiry.message}</p>
+
+              {inquiry.response && (
+                <div className="bg-stone p-3 text-sm mt-3">
+                  <span className="text-xs text-brass font-medium block mb-1">
+                    Owner replied
+                  </span>
+                  <p className="text-ink">{inquiry.response}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>
