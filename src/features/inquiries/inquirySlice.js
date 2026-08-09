@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api/axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../api/axios";
 
 const initialState = {
   myInquiries: [],
@@ -10,43 +10,63 @@ const initialState = {
 };
 
 export const sendInquiry = createAsyncThunk(
-  'inquiries/send',
+  "inquiries/send",
   async ({ listingId, message }, { rejectWithValue }) => {
     try {
-      const res = await api.post('/inquiries', { listingId, message });
+      const res = await api.post("/inquiries", { listingId, message });
       return res.data.inquiry;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to send inquiry');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to send inquiry",
+      );
     }
-  }
+  },
 );
 
 export const fetchMyInquiries = createAsyncThunk(
-  'inquiries/fetchMine',
+  "inquiries/fetchMine",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get('/inquiries/mine');
+      const res = await api.get("/inquiries/mine");
       return res.data.inquiries;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to load inquiries');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to load inquiries",
+      );
     }
-  }
+  },
 );
 
 export const fetchListingInquiries = createAsyncThunk(
-  'inquiries/fetchForListing',
+  "inquiries/fetchForListing",
   async (listingId, { rejectWithValue }) => {
     try {
       const res = await api.get(`/inquiries/listing/${listingId}`);
       return res.data.inquiries;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to load inquiries');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to load inquiries",
+      );
     }
-  }
+  },
+);
+
+export const respondToInquiry = createAsyncThunk(
+  "inquiries/respond",
+  async ({ id, response }, { rejectWithValue }) => {
+    try {
+      const res = await api.put(`/inquiries/${id}/respond`, { response });
+      return res.data.inquiry;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to send response",
+      );
+    }
+  },
 );
 
 const inquirySlice = createSlice({
-  name: 'inquiries',
+  name: "inquiries",
   initialState,
   reducers: {
     clearInquirySuccess: (state) => {
@@ -61,7 +81,7 @@ const inquirySlice = createSlice({
       })
       .addCase(sendInquiry.fulfilled, (state) => {
         state.loading = false;
-        state.success = 'Inquiry sent successfully';
+        state.success = "Inquiry sent successfully";
       })
       .addCase(sendInquiry.rejected, (state, action) => {
         state.loading = false;
@@ -72,7 +92,13 @@ const inquirySlice = createSlice({
       })
       .addCase(fetchListingInquiries.fulfilled, (state, action) => {
         state.listingInquiries = action.payload;
-      });
+      })
+      .addCase(respondToInquiry.fulfilled, (state, action) => {
+        const index = state.listingInquiries.findIndex(
+          (i) => i._id === action.payload._id,
+        );
+        if (index !== -1) state.listingInquiries[index] = action.payload;
+      })
   },
 });
 

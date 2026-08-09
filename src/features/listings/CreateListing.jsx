@@ -57,6 +57,7 @@ export default function CreateListing() {
           </span>
           <input
             type="text"
+            minlength="6"
             name="title"
             value={formData.title}
             onChange={handleChange}

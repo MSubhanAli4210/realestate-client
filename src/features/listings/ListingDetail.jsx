@@ -8,7 +8,11 @@ import {
   fetchFavourites,
 } from "../favourites/favouriteSlice";
 import { fetchListingInquiries } from "../inquiries/inquirySlice";
-import { sendInquiry, clearInquirySuccess } from "../inquiries/inquirySlice";
+import {
+  sendInquiry,
+  clearInquirySuccess,
+  respondToInquiry,
+} from "../inquiries/inquirySlice";
 import ReviewSection from "../reviews/ReviewSection";
 
 export default function ListingDetail() {
@@ -22,6 +26,8 @@ export default function ListingDetail() {
   const { listingInquiries } = useSelector((state) => state.inquiries);
 
   const [message, setMessage] = useState("");
+  const [replyDrafts, setReplyDrafts] = useState({});
+
   const {
     loading: inquiryLoading,
     error: inquiryError,
@@ -75,6 +81,13 @@ export default function ListingDetail() {
     if (deleteListing.fulfilled.match(result)) {
       navigate("/");
     }
+  };
+
+  const handleRespond = async (inquiryId) => {
+    const response = replyDrafts[inquiryId];
+    if (!response?.trim()) return;
+    await dispatch(respondToInquiry({ id: inquiryId, response }));
+    setReplyDrafts((prev) => ({ ...prev, [inquiryId]: "" }));
   };
 
   if (loading || !currentListing) {
@@ -169,7 +182,39 @@ export default function ListingDetail() {
                           {inquiry.sender?.email}
                         </span>
                       </div>
-                      <p className="text-slate text-sm">{inquiry.message}</p>
+                      <p className="text-slate text-sm mb-3">
+                        {inquiry.message}
+                      </p>
+
+                      {inquiry.response ? (
+                        <div className="bg-stone p-3 text-sm">
+                          <span className="text-xs text-brass font-medium block mb-1">
+                            Your reply
+                          </span>
+                          <p className="text-ink">{inquiry.response}</p>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={replyDrafts[inquiry._id] || ""}
+                            onChange={(e) =>
+                              setReplyDrafts((prev) => ({
+                                ...prev,
+                                [inquiry._id]: e.target.value,
+                              }))
+                            }
+                            placeholder="Write a reply..."
+                            className="flex-1 border border-ink/10 focus:border-brass outline-none px-3 py-2 text-sm bg-transparent"
+                          />
+                          <button
+                            onClick={() => handleRespond(inquiry._id)}
+                            className="bg-ink text-stone px-4 py-2 text-sm font-medium hover:bg-brass transition-colors"
+                          >
+                            Reply
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
