@@ -1,20 +1,31 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchReviewsForListing, createReview, deleteReview } from './reviewSlice';
 
-export default function ReviewSection({ listingId }) {
-  const dispatch = useDispatch();
-  const { reviews, loading, error } = useSelector((state) => state.reviews);
-  const { user } = useSelector((state) => state.auth);
+interface ReviewSectionProps {
+  listingId: string;
+}
 
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
+interface Review {
+  _id: string;
+  rating: number;
+  comment?: string;
+  reviewer?: { _id: string; username?: string } | string;
+}
+
+export default function ReviewSection({ listingId }: ReviewSectionProps) {
+  const dispatch = useAppDispatch();
+  const { reviews, loading, error } = useAppSelector((state) => state.reviews);
+  const { user } = useAppSelector((state) => state.auth);
+
+  const [rating, setRating] = useState<number>(5);
+  const [comment, setComment] = useState<string>('');
 
   useEffect(() => {
     dispatch(fetchReviewsForListing(listingId));
   }, [dispatch, listingId]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = await dispatch(createReview({ listingId, rating, comment }));
     if (createReview.fulfilled.match(result)) {
@@ -23,15 +34,18 @@ export default function ReviewSection({ listingId }) {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     if (window.confirm('Delete this review?')) {
       dispatch(deleteReview(id));
     }
   };
 
-  const alreadyReviewed = reviews.some(
-    (r) => r.reviewer?._id === user?.id || r.reviewer === user?.id
-  );
+  const alreadyReviewed = reviews.some((review) => {
+    if (typeof review.reviewer === 'object') {
+      return review.reviewer._id === user?.id;
+    }
+    return review.reviewer === user?.id;
+  });
 
   return (
     <div className="mt-12 pt-10 border-t border-ink/10">
@@ -94,7 +108,7 @@ export default function ReviewSection({ listingId }) {
             <div key={review._id} className="border-b border-ink/10 pb-5">
               <div className="flex items-center justify-between mb-1">
                 <span className="font-medium text-ink text-sm">
-                  {review.reviewer?.username || 'Anonymous'}
+                  {typeof review.reviewer === 'object' ? review.reviewer.username ?? 'Anonymous' : 'Anonymous'}
                 </span>
                 <div className="flex items-center gap-3">
                   <span className="text-brass text-sm">
@@ -103,8 +117,7 @@ export default function ReviewSection({ listingId }) {
                       {'★'.repeat(5 - review.rating)}
                     </span>
                   </span>
-                  {(review.reviewer?._id === user?.id ||
-                    review.reviewer === user?.id) && (
+                  {(typeof review.reviewer === 'object' ? review.reviewer._id === user?.id : review.reviewer === user?.id) && (
                     <button
                       onClick={() => handleDelete(review._id)}
                       className="text-xs text-red-600 hover:underline"

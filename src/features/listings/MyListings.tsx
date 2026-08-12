@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+
 import { fetchMyListings } from './listingSlice';
 import ListingCard from './ListingCard';
 import PageHeader from '../../components/PageHeader';
 
 export default function MyListings() {
-  const dispatch = useDispatch();
-  const { myListings, loading } = useSelector((state) => state.listings);
+  const dispatch = useAppDispatch();
+
+  const { myListings, loading } = useAppSelector(
+    (state) => state.listings
+  );
 
   useEffect(() => {
     dispatch(fetchMyListings());
@@ -16,7 +21,9 @@ export default function MyListings() {
   return (
     <div>
       <PageHeader
-        eyebrow={`${myListings.length} listing${myListings.length !== 1 ? 's' : ''}`}
+        eyebrow={`${myListings.length} listing${
+          myListings.length !== 1 ? 's' : ''
+        }`}
         title="My Listings"
         subtitle="Manage the properties you've posted."
         action={
@@ -37,7 +44,11 @@ export default function MyListings() {
             <p className="text-slate mb-4">
               You haven't listed any properties yet.
             </p>
-            <Link to="/listings/new" className="text-brass hover:underline">
+
+            <Link
+              to="/listings/new"
+              className="text-brass hover:underline"
+            >
               List your first property →
             </Link>
           </div>
@@ -45,7 +56,10 @@ export default function MyListings() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {myListings.map((listing) => (
-            <ListingCard key={listing._id} listing={listing} />
+            <ListingCard
+              key={listing._id}
+              listing={listing}
+            />
           ))}
         </div>
       </div>

@@ -1,23 +1,27 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../features/auth/authSlice";
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { logout } from '../features/auth/authSlice';
+
+interface NavLinkClassProps {
+  isActive: boolean;
+}
 
 export default function Navbar() {
-  const { user, token } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  const { user, token } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const linkClass = ({ isActive }: NavLinkClassProps) =>
+    `relative pb-1 transition-colors ${
+      isActive ? 'text-brass' : 'hover:text-brass text-stone'
+    } after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-brass after:transition-all after:duration-300 ${
+      isActive ? 'after:w-full' : 'after:w-0'
+    }`;
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate('/login');
   };
-
-  const linkClass = ({ isActive }) =>
-    `relative pb-1 transition-colors ${
-      isActive ? "text-brass" : "hover:text-brass text-stone"
-    } after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-brass after:transition-all after:duration-300 ${
-      isActive ? "after:w-full" : "after:w-0"
-    }`;
 
   return (
     <nav className="bg-ink text-stone px-6 py-4 flex items-center justify-between">

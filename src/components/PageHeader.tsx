@@ -1,4 +1,13 @@
-export default function PageHeader({ eyebrow, title, subtitle, action }) {
+import type { ReactNode } from 'react';
+
+interface PageHeaderProps {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  action?: ReactNode;
+}
+
+export default function PageHeader({ eyebrow, title, subtitle, action }: PageHeaderProps) {
   return (
     <div className="bg-ink text-stone px-6 py-12 relative overflow-hidden">
       <div className="max-w-6xl mx-auto relative z-10 flex items-end justify-between flex-wrap gap-6">

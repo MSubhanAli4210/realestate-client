@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import type { Listing } from "./listingSlice";
 
-export default function ListingCard({ listing }) {
+interface ListingCardProps {
+  listing: Listing;
+}
+
+export default function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link
       to={`/listings/${listing._id}`}

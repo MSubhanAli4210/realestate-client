@@ -1,17 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchListingById, updateListing } from './listingSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { fetchListingById, updateListing, type CreateListingData } from './listingSlice';
 import PageHeader from '../../components/PageHeader';
 
+interface EditListingFormData {
+  title: string;
+  location: string;
+  price: string;
+  bedrooms: string;
+  images: string;
+}
+
 export default function EditListing() {
-  const { id } = useParams();
-  const dispatch = useDispatch();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { currentListing, loading, error } = useSelector((state) => state.listings);
+  const { currentListing, loading, error } = useAppSelector((state) => state.listings);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EditListingFormData>({
     title: '',
     location: '',
     price: '',
@@ -20,7 +28,9 @@ export default function EditListing() {
   });
 
   useEffect(() => {
-    dispatch(fetchListingById(id));
+    if (id) {
+      dispatch(fetchListingById(id));
+    }
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -28,20 +38,22 @@ export default function EditListing() {
       setFormData({
         title: currentListing.title || '',
         location: currentListing.location || '',
-        price: currentListing.price || '',
-        bedrooms: currentListing.bedrooms || '',
+        price: String(currentListing.price ?? ''),
+        bedrooms: String(currentListing.bedrooms ?? ''),
         images: currentListing.images?.join(', ') || '',
       });
     }
   }, [currentListing]);
 
-  const handleChange = (e) =>
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = {
+    if (!id) return;
+
+    const payload: CreateListingData = {
       title: formData.title,
       location: formData.location,
       price: Number(formData.price),

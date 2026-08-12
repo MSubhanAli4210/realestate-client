@@ -1,4 +1,10 @@
-export default function FormField({ label, ...props }) {
+import type { InputHTMLAttributes } from 'react';
+
+interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+}
+
+export default function FormField({ label, ...props }: FormFieldProps) {
   return (
     <label className="block mb-5">
       <span className="block text-xs font-medium text-slate uppercase tracking-wide mb-1.5">

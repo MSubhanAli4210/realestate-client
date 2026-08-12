@@ -1,4 +1,12 @@
-export default function AuthLayout({ title, subtitle, children }) {
+import type { ReactNode } from 'react';
+
+interface AuthLayoutProps {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}
+
+export default function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex bg-stone font-body">
       {/* Left panel — brand */}
